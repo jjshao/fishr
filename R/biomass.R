@@ -26,6 +26,8 @@ biomass_index <- function(
   if (is.null(cpue) && (!is.null(catch) && !is.null(effort))) {
     cpue <- cpue(catch, effort, ...)
   }
-
+  if (is.null(cpue)) {
+    stop("Must provide either 'cpue' or both 'catch' and 'effort'.")
+  }
   cpue * area_swept
 }

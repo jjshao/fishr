@@ -28,6 +28,8 @@ cpue <- function(
 
   method <- match.arg(method)
 
+  validate_numeric_inputs(catch = catch, effort = effort)
+
   raw_cpue <- switch(method, ratio = catch / effort, log = log(catch / effort))
 
   raw_cpue * gear_factor
