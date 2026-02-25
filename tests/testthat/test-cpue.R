@@ -22,3 +22,10 @@ test_that("gear_factor standardization scales correctly", {
     cpue(catch = 100, effort = 10, gear_factor = 1)
   )
 })
+
+test_that("cpue handles zero catch and missing data", {
+  expect_equal(cpue(catch = 0, effort = 10), 0)
+
+  expect_true(is.na(cpue(NA_real_, 10)))
+  expect_true(is.na(cpue(100, NA_real_)))
+})
