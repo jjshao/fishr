@@ -22,8 +22,10 @@ biomass_index <- function(
   effort = NULL,
   ...
 ) {
+  rlang::check_dots_used()
   if (is.null(cpue) && (!is.null(catch) && !is.null(effort))) {
     cpue <- cpue(catch, effort, ...)
   }
+
   cpue * area_swept
 }
