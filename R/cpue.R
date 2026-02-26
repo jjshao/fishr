@@ -2,20 +2,28 @@
 #'
 #' Calculate CPUE from catch and effort data with optional gear standardization.
 #'
-#' @param catch Numeric vector of catch (e.g., kg)
+#' @param catch Numeric vector of catch (e.g., kg) or a data.frame with "catch" and "effort" columns
+#' @param ... Additional arguments passed on to methods
+#'
+#' @export
+cpue <- function(catch, ...) {
+  UseMethod("cpue")
+}
+
+#' @rdname cpue
 #' @param effort Numeric vector of effort (e.g., hours)
 #' @param gear_factor Numeric adjustment for gear standardization (default is 1)
 #' @param verbose Logical indicating whether to print processing messages (default is FALSE, also accept the value of 'fishr.verbose')
 #' @param method Character; "ratio" or "log"
 #'
-#' @returns A numeric vector of CPUE values
+#' @returns A numeric vector of CPUE values of the class 'cpue_result'
 #' @export
 #'
 #' @examples
 #' cpue(100, 10)
 #' cpue(100, 10, gear_factor = 0.5)
 
-cpue <- function(
+cpue.numeric <- function(
   catch,
   effort,
   gear_factor = 1,
@@ -38,6 +46,40 @@ cpue <- function(
     gear_factor = gear_factor,
     n_records = length(catch)
   )
+}
+
+#' @rdname cpue
+#' @export
+cpue.data.frame <- function(
+  catch,
+  gear_factor = 1,
+  method = c("ratio", "log"),
+  verbose = getOption("fishr.verbose", FALSE),
+  ...
+) {
+  if (!"catch" %in% names(catch)) {
+    stop("Column 'catch' not found in data frame.", call. = FALSE)
+  }
+  if (!"effort" %in% names(catch)) {
+    stop("Column 'effort' not found in data frame.", call. = FALSE)
+  }
+
+  # We can then call the numeric method by extracting the relevant columns and passing them to cpue() again.
+  # This way we reuse the existing logic and maintain a single source of truth for the CPUE calculation.
+  cpue(
+    catch = catch[["catch"]],
+    effort = catch[["effort"]],
+    gear_factor = gear_factor,
+    method = method,
+    verbose = verbose,
+    ...
+  )
+}
+
+#' @rdname cpue
+#' @export
+cpue.default <- function(catch, ...) {
+  stop("Unsupported input type for cpue(): ", class(catch), call. = FALSE)
 }
 
 
