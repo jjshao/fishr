@@ -28,7 +28,8 @@ cpue.numeric <- function(
   effort,
   gear_factor = 1,
   method = c("ratio", "log"),
-  verbose = getOption("fishr.verbose", default = FALSE)
+  verbose = getOption("fishr.verbose", default = FALSE),
+  ...
 ) {
   if (verbose) {
     message("Processing ", length(catch), " records using ", method, " method")
